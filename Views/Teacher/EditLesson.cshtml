@@ -1,0 +1,62 @@
+@model CoursePlatform.ViewModels.EditLessonViewModel
+
+@{
+    ViewData["Title"] = "Ders Video Düzenle";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i>Ders ve Video Bilgilerini Düzenle</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="EditLesson" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CourseId" />
+                        <input type="hidden" asp-for="CurrentVideoUrl" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <label asp-for="Title" class="form-label fw-medium text-dark">Ders Başlığı</label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Order" class="form-label fw-medium text-dark">Sıra No</label>
+                                <input asp-for="Order" type="number" class="form-control" />
+                                <span asp-validation-for="Order" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-medium text-dark">Ders Açıklaması</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- YENİ VİDEO YÜKLEME ALANI -->
+                        <div class="mb-4 p-3 bg-light rounded-3 border">
+                            <label asp-for="NewVideoFile" class="form-label fw-medium text-dark"></label>
+                            <input asp-for="NewVideoFile" type="file" accept="video/mp4" class="form-control" />
+                            <small class="text-muted d-block mt-1">
+                                Sadece mevcut videoyu <strong>değiştirmek istiyorsanız</strong> yeni bir .mp4 dosyası seçin. Aksi takdirde mevcut video korunacaktır.
+                            </small>
+                            <span asp-validation-for="NewVideoFile" class="text-danger d-block"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between pt-2 border-top">
+                            <a asp-action="CourseDetails" asp-route-id="@Model.CourseId" class="btn btn-outline-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary px-4">Değişiklikleri Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

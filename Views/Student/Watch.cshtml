@@ -1,0 +1,106 @@
+@model CoursePlatform.ViewModels.CourseWatchViewModel
+
+@{
+    ViewData["Title"] = Model.CurrentLesson.Title + " - " + Model.Course.Title;
+    bool isCurrentLessonCompleted = Model.CompletedLessonIds.Contains(Model.CurrentLesson.Id);
+}
+
+<div class="container-fluid py-3">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-8">
+            <a asp-action="MyCourses" class="btn btn-outline-secondary btn-sm mb-2">
+                <i class="bi bi-arrow-left me-1"></i>Kayıtlı Kurslarıma Dön
+            </a>
+            <h3 class="mb-0">@Model.Course.Title</h3>
+        </div>
+        <!-- Kurs Tamamlama Yüzdesi (Progress Bar) -->
+        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+            <div class="d-flex align-items-center justify-content-md-end gap-2">
+                <small class="fw-bold">Kurs İlerlemesi: %@Model.ProgressPercentage</small>
+            </div>
+            <div class="progress mt-1" style="height: 10px;">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: @Model.ProgressPercentage%" 
+                     aria-valuenow="@Model.ProgressPercentage" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- SOL TARAF: Video Oynatıcı ve Tamamlandı Butonu -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-body p-0 bg-black rounded-top overflow-hidden">
+                    <video id="courseVideo" controls class="w-100" style="max-height: 500px;" autoplay>
+                        <source src="@Model.CurrentLesson.VideoUrl" type="video/mp4">
+                        Tarayıcınız video oynatmayı desteklemiyor.
+                    </video>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h4 class="card-title mb-0">@Model.CurrentLesson.Order. @Model.CurrentLesson.Title</h4>
+                        
+                        <!-- Dersi Tamamla Butonu -->
+                        <form asp-action="ToggleLessonProgress" method="post">
+                            <input type="hidden" name="lessonId" value="@Model.CurrentLesson.Id" />
+                            <input type="hidden" name="courseId" value="@Model.Course.Id" />
+                            <button type="submit" class="btn @(isCurrentLessonCompleted ? "btn-success" : "btn-outline-success")">
+                                <i class="bi @(isCurrentLessonCompleted ? "bi-check-circle-fill" : "bi-circle") me-1"></i>
+                                @(isCurrentLessonCompleted ? "Tamamlandı" : "Tamamlandı Olarak İşaretle")
+                            </button>
+                        </form>
+                    </div>
+                    <hr />
+                    <p class="card-text text-secondary">
+                        @(string.IsNullOrEmpty(Model.CurrentLesson.Description) ? "Bu ders için ek açıklama girilmemiş." : Model.CurrentLesson.Description)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ TARAF: Ders Listesi / Müfredat -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-list-ol me-2"></i>Kurs Müfredatı</span>
+                    <span class="badge bg-secondary">@Model.CompletedLessonIds.Count / @Model.Lessons.Count Tamamlandı</span>
+                </div>
+                <div class="list-group list-group-flush" style="max-height: 550px; overflow-y: auto;">
+                    @foreach (var lesson in Model.Lessons)
+                    {
+                        var isActive = lesson.Id == Model.CurrentLesson.Id;
+                        var isCompleted = Model.CompletedLessonIds.Contains(lesson.Id);
+
+                        <a asp-action="Watch" 
+                           asp-route-courseId="@Model.Course.Id" 
+                           asp-route-lessonId="@lesson.Id" 
+                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(isActive ? "active fw-bold" : "")">
+                            <div class="d-flex align-items-center">
+                                @if (isCompleted)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success me-2 fs-5" title="Tamamlandı"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-circle text-muted me-2 fs-5"></i>
+                                }
+                                <div>
+                                    <span class="me-1">#@lesson.Order</span>
+                                    <span>@lesson.Title</span>
+                                </div>
+                            </div>
+                            @if (isActive)
+                            {
+                                <i class="bi bi-play-fill"></i>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

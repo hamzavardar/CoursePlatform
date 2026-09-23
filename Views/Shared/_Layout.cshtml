@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CoursePlatform.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Course Platform</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md border-bottom mb-4">
+            <div class="container">
+                <a class="navbar-brand fs-4" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-play-btn-fill me-2"></i>EduStream
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Course" asp-action="Index">Kurslar</a>
+                        </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (User.IsInRole("Teacher"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-primary fw-semibold" asp-controller="Teacher" asp-action="Index">
+                                        <i class="bi bi-journal-text me-1"></i>Kurslarım (Eğitmen)
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-primary fw-semibold" asp-controller="Student" asp-action="MyCourses">
+                                        <i class="bi bi-book me-1"></i>Kayıtlı Kurslarım
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer py-3 bg-white border-top text-center text-muted small">
+        <div class="container">
+            &copy; 2026 EduStream Platformu — Tüm Hakları Saklıdır.
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Eksik olan ve hatayı çözen Scripts bloğu -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

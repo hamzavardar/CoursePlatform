@@ -1,0 +1,61 @@
+@model CoursePlatform.ViewModels.AddLessonViewModel
+
+@{
+    ViewData["Title"] = "Ders Video Yükle";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-cloud-upload me-2"></i>Ders Video Yükle</h4>
+                    <small class="text-white-50">Kurs: @Model.CourseTitle</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddLesson" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="CourseId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <label asp-for="Title" class="form-label fw-semibold"></label>
+                                <input asp-for="Title" class="form-control" placeholder="Örn: 1. Bölüm - Giriş ve Kurulumlar" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Order" class="form-label fw-semibold"></label>
+                                <input asp-for="Order" type="number" class="form-control" />
+                                <span asp-validation-for="Order" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Ders içeriği özeti..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VideoFile" class="form-label fw-semibold"></label>
+                            <input asp-for="VideoFile" type="file" accept="video/mp4" class="form-control" />
+                            <small class="text-muted">Sadece .mp4 uzantılı video dosyaları yükleyebilirsiniz.</small>
+                            <span asp-validation-for="VideoFile" class="text-danger d-block"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between pt-3">
+                            <a asp-action="CourseDetails" asp-route-id="@Model.CourseId" class="btn btn-outline-secondary">Geri Dön</a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-upload me-1"></i>Videoyu Yükle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

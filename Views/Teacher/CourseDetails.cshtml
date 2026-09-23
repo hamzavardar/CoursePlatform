@@ -1,0 +1,91 @@
+@model CoursePlatform.Models.Course
+
+@{
+    ViewData["Title"] = Model.Title + " - Kurs Yönetimi";
+}
+
+<div class="container py-4">
+    <!-- Üst Başlık ve Yönetim Butonları -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <div class="row align-items-center g-3">
+            <div class="col-md-6">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">@Model.Category?.Name</span>
+                <h2 class="fw-bold text-dark mb-2">@Model.Title</h2>
+                <p class="text-secondary mb-0">@(string.IsNullOrEmpty(Model.Description) ? "Açıklama yok." : Model.Description)</p>
+            </div>
+            <div class="col-md-6 text-md-end d-flex flex-wrap gap-2 justify-content-md-end">
+                <a asp-action="AddLesson" asp-route-courseId="@Model.Id" class="btn btn-success">
+                    <i class="bi bi-plus-circle me-1"></i>Yeni Video/Ders Ekle
+                </a>
+
+                <!-- KURS DÜZENLE BUTONU -->
+                <a asp-action="EditCourse" asp-route-id="@Model.Id" class="btn btn-warning text-dark">
+                    <i class="bi bi-pencil me-1"></i>Kursu Düzenle
+                </a>
+                
+                <!-- KURS SİL BUTONU -->
+                <form asp-action="DeleteCourse" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Bu kursu ve tüm videolarını silmek istediğinize emin misiniz?');">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Kursu Sil
+                    </button>
+                </form>
+
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Kurs Listesi
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dersler / Videolar Listesi -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-collection-play text-primary me-2"></i>Mevcut Dersler / Videolar</h5>
+            <span class="badge bg-light text-dark border fs-6">Toplam: @Model.Lessons.Count Ders</span>
+        </div>
+
+        @if (!Model.Lessons.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-camera-video display-4 d-block mb-3 opacity-50"></i>
+                <p class="mb-2 fs-6">Bu kursta henüz hiç ders videosu yok.</p>
+                <small>Yukarıdaki <strong>Yeni Video/Ders Ekle</strong> butonunu kullanarak ilk videonuzu ekleyebilirsiniz.</small>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var lesson in Model.Lessons)
+                {
+                    <div class="card border rounded-3 p-3 bg-light-subtle">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-primary rounded-pill px-3 py-2 fs-6">#@lesson.Order</span>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">@lesson.Title</h6>
+                                    <p class="text-muted small mb-0">@(string.IsNullOrEmpty(lesson.Description) ? "Açıklama yok" : lesson.Description)</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="@lesson.VideoUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-play-circle me-1"></i>Önizle
+                                </a>
+                                <a asp-action="EditLesson" asp-route-id="@lesson.Id" class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-pencil me-1"></i>Düzenle
+                                </a>
+                                
+                                <form asp-action="DeleteLesson" method="post" onsubmit="return confirm('Bu videoyu silmek istediğinize emin misiniz?');">
+                                    <input type="hidden" name="id" value="@lesson.Id" />
+                                    <input type="hidden" name="courseId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i>Sil
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

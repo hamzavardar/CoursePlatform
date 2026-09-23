@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CoursePlatform.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+<ul class="navbar-nav align-items-center">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark fw-medium me-2" asp-area="Identity" asp-page="/Account/Manage/Index" title="Profil">
+            <i class="bi bi-person-circle fs-5 me-1 text-primary"></i>Hesabım
+        </a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Çıkış Yap</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-sm btn-primary ms-2" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
+    </li>
+}
+</ul>
